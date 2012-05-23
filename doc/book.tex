@@ -1,0 +1,169 @@
+%%%% for a4 paper begin
+\documentclass[mingoth,oneside]{jsbook}
+%%%% for a4 paper end
+
+%%%% for a5 paper begin
+% \documentclass[a5paper,mingoth,oneside,14pt]{jsbook}
+% \special{papersize=148mm,210mm}
+%%%% for a5 paper end
+
+	\usepackage{titlesec}
+	\usepackage[usenames]{color}
+	\usepackage{listings,jlisting}
+%	\usepackage{listings}
+	\usepackage{ascmac}
+	\usepackage{fancybox}
+	\usepackage{moreverb}
+	\usepackage[dvipdfm]{graphicx}
+	\usepackage[abs]{overpic}
+        \usepackage{ccicons}
+	%\usepackage{emathPbb}
+
+
+\usepackage{soul}
+\sethlcolor{GreenYellow}
+
+
+
+\newcommand{\colorrule}[1]{%
+\begingroup\color{#1}\hrule\endgroup%
+}%
+
+\renewcommand{\thesection}{\arabic{section}}
+%\renewcommand{\thesubsection}{\arabic{subsection}}
+
+%%%% for a4 paper begin
+\setlength{\textwidth}{\fullwidth}
+\setlength{\evensidemargin}{\oddsidemargin}
+%%%% for a4 paper end
+
+%%%% for a5 paper begin
+% \setlength{\fullwidth}{90mm}
+% \setlength{\textwidth}{90mm}
+% \setlength{\evensidemargin}{-10mm}
+% \setlength{\oddsidemargin}{-10mm}
+%%%% for a5 paper end
+
+
+\def\BIG{\fontsize{48pt}{48pt}\selectfont}
+\titleformat{\chapter}[frame]
+ 	{\normalfont}
+ 	{\filleft\BIG
+	\enspace\bfseries{\LARGE 第}\thechapter{\LARGE 章}\enspace}
+	{25pt}
+	{\huge\bfseries\filleft\vspace{-2mm}}
+\titleformat{\section}[hang]
+	{\large\gtfamily}
+	{\hspace{-1em}}
+	%{\hspace{10mm}\thesection}
+	{10pt}
+	%{}
+%%	{\rule[-3mm]{3mm}{8mm} \hspace{-4mm} \rule[-3mm]{25em}{1pt} \hspace{-25em} \Large \ }
+	{\rule[-3mm]{3mm}{8mm} \hspace{-4mm} \rule[-3mm]{20em}{1pt} \hspace{-20em} \Large \ }
+\titleformat{\subsection}[hang]
+	{\large\gtfamily}
+	{}
+	{10pt}
+	{\color{Gray}\hspace{2em}\rule[-2mm]{2mm}{6mm} \hspace{-4mm} \rule[-2mm]{22em}{0.3pt} \hspace{-22em}
+	%\color{Gray}
+	%\hspace{-5pt}\rule[-1mm]{2mm}{6mm}
+	\color{black}
+	\large \ }
+
+\newenvironment{result}
+{
+\begin{center}
+\begin{minipage}[c]{42em}
+\begin{itembox}[l]{\shadowbox{実行結果}}
+}
+{
+\end{itembox}
+\end{minipage}
+\end{center}
+}
+
+
+
+\renewcommand{\lstlistingname}{\small \bf Code} 
+\lstset{%
+	frame=shadowbox,
+	backgroundcolor={\color[gray]{.97}},
+	stringstyle={\ttfamily \color[rgb]{0,0,1}},
+	commentstyle={\color[rgb]{1,0,1}},
+%	commentstyle={\itshape \color[gray]{0.6}},
+	identifierstyle={\ttfamily},
+%	identifierstyle={\bfseries},
+	keywordstyle={\ttfamily \color[rgb]{0,0.5,0}},
+%	keywordstyle={\bfseries \color[gray]{0.4}},
+	basicstyle={\ttfamily},
+%	basicstyle={\bfseries},
+	breaklines=true,
+%%%%	xleftmargin=4zw,
+%%%%	xrightmargin=4zw,
+	xleftmargin=0zw,
+	xrightmargin=0zw,
+	framerule=.2pt,
+	columns=[l]{fullflexible},
+	numbers=none,
+%  stepnumber=5,
+	numberstyle={\scriptsize},
+	numbersep=1em,
+	language={Ruby},
+	lineskip=-0.5zw,
+	morecomment={[s][{\color[cmyk]{1,0,0,0}}]{/**}{*/}},
+	showstringspaces=false,
+	tabsize = 5,
+%	escapechar=\?,
+}
+
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\title{ {\Huge プログラミング言語入門}}
+\author{watanabe}
+
+
+\begin{document}
+
+% \maketitle
+\begin{titlepage}
+\begin{center}
+
+% Title
+\vspace*{5cm}
+\HRule \\[0.4cm]
+{ \huge \bfseries プログラミング言語入門}\\[0.4cm]
+
+\HRule \\[1.5cm]
+
+\vspace*{8cm}
+
+% Author and supervisor
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+{\large 2012/5/24} \\
+
+% 渡辺 \textsc{昌寛}
+watanabe
+\end{flushright}
+\end{minipage}
+
+
+\vspace*{3cm}
+
+\end{center}
+\end{titlepage}
+
+
+% Bottom of the page
+
+
+\tableofcontents
+
+\input{introduction}
+\input{eval}
+\input{function}
+\input{recursion}
+\input{extend_language}
+\input{next_step}
+\input{bib}

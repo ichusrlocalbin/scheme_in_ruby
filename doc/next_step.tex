@@ -1,0 +1,86 @@
+\chapter{次のステップ\hspace{-3mm}}
+
+\section{Scheme in $\mu$SchemeRにチャレンジ}
+既にみなさんは関数型言語の本質は理解していますが、まだ関数型言語のプロ
+グラミングに慣れているとは言えません。プログラミングは書いて慣れるもの
+ですので、プログラミング言語の原理を理解しているだけでは不十分です。様々
+なプログラムを書いてみて、その考え方を学んでください。
+
+その教材を一つご紹介します。今回はRubyを用いてSchemeのサブセットを実現
+しました。このRubyのプログラムをSchemeで書いて見ましょう。しかも、ただ
+Schemeで書くのはつまらないので、今回開発した$\mu$SchemeRで動作させて下
+さい。これが実現すれば、Ruby上で$\mu$SchemeRが動き、その上
+で今回作成する(今回Rubyで作成したのと同等の)Scheme処理系が動き、その上で
+ユーザが与えたSchemeプログラムが解釈、実行されることになります。想像した
+だけでエキサイティングになりませんか。
+
+足りない機能があれば、$\mu$SchemeRの処理系をRubyで書き足しながら
+実現してみてください。
+
+実現する上でのヒントです。2ヵ所で代入が必要になります。{\tt letrec}と
+{\tt define}です。代入を実現する{\tt :setq}は次のとおり実現できます。
+与えられた変数を与えられた値に束縛するよう環境を書き換えるものです。
+{\tt define}と異なる点は、代入する変数がまだ使われていない場合エラーとする所で
+す。{\tt special\_form?}、{\tt eval\_special\_form}も書き換えるのを忘れ
+ないで下さい。
+
+\begin{lstlisting}
+def eval_setq(exp, env)
+  var, val = setq_to_var_val(exp)
+  var_ref = lookup_var_ref(var, env)
+  if var_ref != nil
+    var_ref[var] = _eval(val, env)
+  else
+    raise "undefined variable:'#{var}'"    
+  end
+  nil
+end
+
+def setq_to_var_val(exp)
+  [exp[1], exp[2]]
+end
+
+def setq? exp
+  exp[0] == :setq
+end
+\end{lstlisting}
+
+またパーサーを次のように書き換えることで、下のようにSchemeのプログラム内で{\tt set!}というSchemeの構文と同じものを使うことが出来るようになります。
+
+\begin{lstlisting}
+def parse(exp)
+  program = exp.strip().gsub(/set!/, 'setq').gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').gsub(/\s+/, ',').gsub(/,+/, ', ').gsub(/\(/, '[').gsub(/\)/, ']')
+  puts program
+  eval(program)
+end
+\end{lstlisting}
+
+\begin{lstlisting}
+(let ((x 1)) (let ((dummy (set! x 2))) x))
+\end{lstlisting}
+
+2ヵ所で代入が必要と言いましたが、逆に言えばそれ以外の場所で代入は使って
+はいけません。関数型言語の醍醐味を存分楽しんで下さい。
+
+\section{SICPにチャレンジ}
+今のみなさんであれば、SICPと呼ばれる本、Structure and Interpretaion of Computer Programs 2nd ed.: 訳本 計算機プログラムの構造と解釈 第2版\cite{SICP}を十分読める実力を持っています。
+
+むしろハンデがありますので、使っている機能を$\mu$SchemeRに実装していきながら読み進めるくらいの余裕があることでしょう。
+
+SICPの後半では、この文書で行ったようにSchemeの処理系を実装します。それを使った言語機能の拡張は間違いなく、みなさんのためになります。ぜひトライしてみて下さい。
+
+\section{シンタックスの変更}
+せっかく自分が作ったプログラミング言語なのにシンタックスがカッコ悪い(もしくはカッコが多い)と友達にバカにされませんでしたか?すでに十分プログラミング言語について理解しているあなたは“そんなのは見掛け上の文法の話で中身は変わらない。機能を見てくれ。”と言うかもしれませんが、残念ながら反応はあまり変わりません。そこでクールなシンタックスに変えて見返してみましょう。
+I-expressionという記法があり\footnote{{\tt http://srfi.schemers.org/srfi-49/srfi-49.html}}、これはPythonのようにインデントで文法を解釈するというものです。 
+
+例えば、階乗を求めるプログラムは次のように書けます。カッコがずいぶん少なく、モダンな感じのプログラミング言語に見えませんか?
+
+\begin{lstlisting}
+define (fact x)
+ if (= x 0) 1
+  * x
+   fact (- x 1)
+\end{lstlisting}
+
+これを次のようにして実現してみましょう。脚注のURLにI-Expressionを解釈するプログラムが記載されています。このプログラムを実行できるように$\mu$SchemeRを拡張します。その後、拡張された$\mu$SchemeRでI-expressionで書かれたプログラムを解釈し、得られたプログラムを、$\mu$Scheme実行します。
+
