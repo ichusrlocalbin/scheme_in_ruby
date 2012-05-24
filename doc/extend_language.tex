@@ -17,14 +17,14 @@ def null?(list)
   list == []
 end
 
-$list_env = 
-    {:nil => [],
-    :null? => [:prim, lambda{|list| null?(list)}],
-    :cons => [:prim, lambda{|a, b| cons(a, b)}],
-    :car => [:prim, lambda{|list| car(list)}],
-    :cdr => [:prim, lambda{|list| cdr(list)}],
-    :list => [:prim, lambda{|*list| list(*list)}],
-  }
+$list_env = {
+  :nil   => [],
+  :null? => [:prim, lambda{|list| null?(list)}],
+  :cons  => [:prim, lambda{|a, b| cons(a, b)}],
+  :car   => [:prim, lambda{|list| car(list)}],
+  :cdr   => [:prim, lambda{|list| cdr(list)}],
+  :list  => [:prim, lambda{|*list| list(*list)}],
+}
 
 $global_env = [$list_env, $primitive_fun_env, $boolean_env]
 \end{lstlisting}
@@ -124,12 +124,12 @@ end
 
 def lookup_var_ref(var, env)
   val = nil
-  env.each { |alist|  
+  env.each do |alist|  
     if alist.key?(var)
       val = alist
       break 
     end
-  }
+  end
   val
 end  
 
@@ -200,18 +200,24 @@ Rubyのデータ型に変換するものを作ります。変換後のデータ�
 Schemeのプログラムを入力できるようになります。
 
 \begin{lstlisting}
-_eval(parse('(define (length list)
-          (if  (null?, list) 0
-           (+ (length (cdr list)) 1)))'), $global_env)
+_eval(parse('(define (length list) (if  (null?, list) 0 (+ (length (cdr list)) 1)))'), 
+      $global_env)
 puts _eval(parse('(length (list 1 2 3))'), $global_env)
 \end{lstlisting}
 
 これは、“{\tt [}”, “{\tt ]}”を “{\tt (}”, “{\tt )}”
 に、変数をRubyのシンボルに置き換え、“{\tt ,}”を削除することにより実現します。
 
+\label{fun:parse}
+
 \begin{lstlisting}
 def parse(exp)
-  program = exp.strip().gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').gsub(/\s+/, ',').gsub(/,+/, ', ').gsub(/\(/, '[').gsub(/\)/, ']')
+  program = exp.strip().
+    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
+    gsub(/\s+/, ', ').
+    gsub(/\(/, '[').
+    gsub(/\)/, ']')
+  log(program)
   eval(program)
 end
 \end{lstlisting}
@@ -240,14 +246,19 @@ end
 
 \begin{lstlisting}
 def special_form?(exp)
-  lambda?(exp) or let?(exp) or letrec?(exp) or if?(exp) or cond?(exp) or define?(exp) or quote?(exp)
+  lambda?(exp) or 
+    let?(exp) or 
+    letrec?(exp) or 
+    if?(exp) or 
+    cond?(exp) or 
+    define?(exp) or 
+    quote?(exp)
 end
 
 def eval_special_form(exp, env)
   if lambda?(exp)
     eval_lambda(exp, env)
-  elsif
-    let?(exp)
+  elsif let?(exp)
     eval_let(exp, env)
   elsif letrec?(exp)
     eval_letrec(exp, env)

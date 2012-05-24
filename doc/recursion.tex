@@ -25,7 +25,10 @@ if式を評価するプログラムを上のとおり書いていきましょう
 
 \begin{lstlisting}
 def special_form?(exp)
-  lambda?(exp) or let?(exp) or letrec?(exp) or if?(exp)
+  lambda?(exp) or 
+     let?(exp) or 
+     letrec?(exp) or 
+     if?(exp)
 end
 
 def eval_special_form(exp, env)
@@ -70,16 +73,16 @@ $global_env = [$primitive_fun_env, $boolean_env]
 条件式で扱えるよう、組み込み関数に不等号、等号の演算子を加えます。
 
 \begin{lstlisting}
-$primitive_fun_env = 
-    {:+ => [:prim, lambda{|x, y| x + y}],
-    :- => [:prim, lambda{|x, y| x - y}],
-    :* => [:prim, lambda{|x, y| x * y}],
-    :> => [:prim, lambda{|x, y| x > y }],
-    :>= => [:prim, lambda{|x, y| x >= y }],
-    :< => [:prim, lambda{|x, y| x < y }],
-    :<= => [:prim, lambda{|x, y| x <= y }],
-    :== => [:prim, lambda{|x, y| x == y }],
-  }
+$primitive_fun_env = {
+  :+  => [:prim, lambda{|x, y| x + y}],
+  :-  => [:prim, lambda{|x, y| x - y}],
+  :*  => [:prim, lambda{|x, y| x * y}],
+  :>  => [:prim, lambda{|x, y| x > y}],
+  :>= => [:prim, lambda{|x, y| x >= y}],
+  :<  => [:prim, lambda{|x, y| x <  y}],
+  :<= => [:prim, lambda{|x, y| x <= y}],
+  :== => [:prim, lambda{|x, y| x == y}],
+}
 $global_env = [$primitive_fun_env, $boolean_env]
 \end{lstlisting}
 
@@ -144,9 +147,9 @@ $global_env = [$primitive_fun_env, $boolean_env]
 def eval_letrec(exp, env)
   parameters, args, body = letrec_to_parameters_args_body(exp)
   tmp_env = Hash.new
-  parameters.each { |parameter| 
+  parameters.each do |parameter| 
     tmp_env[parameter] = :dummy
-  }
+  end
   ext_env = extend_env(tmp_env.keys(), tmp_env.values(), env)
   args_val = eval_list(args, ext_env)
   set_extend_env_q(parameters, args_val, ext_env)
@@ -155,9 +158,9 @@ def eval_letrec(exp, env)
 end
 
 def set_extend_env_q(parameters, args_val, ext_env)
-  parameters.zip(args_val).each { |parameter, arg_val|
+  parameters.zip(args_val).each do |parameter, arg_val|
     ext_env[0][parameter] = arg_val
-  }
+  end
 end
 
 def letrec_to_parameters_args_body(exp)

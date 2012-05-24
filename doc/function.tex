@@ -79,12 +79,12 @@ add(3, 2)
 \begin{lstlisting}
 def lookup_var(var, env)
   val = nil
-  env.each { |alist|  
+  env.each do |alist|  
     if alist.key?(var)
       val = alist[var]
       break 
     end
-  }
+  begin
   if val == nil
     raise "couldn't find value to variables:'#{var}'"
   end
@@ -218,7 +218,8 @@ def _eval(exp, env)
 end
 
 def special_form?(exp)
-  lambda?(exp) or let?(exp)
+  lambda?(exp) or 
+    let?(exp)
 end
 
 def lambda?(exp)
