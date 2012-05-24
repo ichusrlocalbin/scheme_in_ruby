@@ -1,29 +1,30 @@
-#! /usr/bin/env
+#!/usr/bin/env ruby
 
 DEBUG = false
 
-$primitive_fun_env = 
-    {:+ => [:prim, lambda{|x, y| x + y}],
-    :- => [:prim, lambda{|x, y| x - y}],
-    :* => [:prim, lambda{|x, y| x * y}],
-    :> => [:prim, lambda{|x, y| x > y }],
-    :>= => [:prim, lambda{|x, y| x >= y }],
-    :< => [:prim, lambda{|x, y| x < y }],
-    :<= => [:prim, lambda{|x, y| x <= y }],
-    :== => [:prim, lambda{|x, y| x == y }],
-  }
+$primitive_fun_env = {
+  :+  => [:prim, lambda{|x, y| x + y}],
+  :-  => [:prim, lambda{|x, y| x - y}],
+  :*  => [:prim, lambda{|x, y| x * y}],
+  :>  => [:prim, lambda{|x, y| x > y}],
+  :>= => [:prim, lambda{|x, y| x >= y}],
+  :<  => [:prim, lambda{|x, y| x <  y}],
+  :<= => [:prim, lambda{|x, y| x <= y}],
+  :== => [:prim, lambda{|x, y| x == y}],
+}
 
-$boolean_env = 
-    {:true => true, :false => false}
+$boolean_env = {
+  :true => true, :false => false
+}
 
-$list_env = 
-    {:nil => [],
-    :null? => [:prim, lambda{|list| null?(list)}],
-    :cons => [:prim, lambda{|a, b| cons(a, b)}],
-    :car => [:prim, lambda{|list| car(list)}],
-    :cdr => [:prim, lambda{|list| cdr(list)}],
-    :list => [:prim, lambda{|*list| list(*list)}],
-  }
+$list_env = {
+  :nil   => [],
+  :null? => [:prim, lambda{|list| null?(list)}],
+  :cons  => [:prim, lambda{|a, b| cons(a, b)}],
+  :car   => [:prim, lambda{|list| car(list)}],
+  :cdr   => [:prim, lambda{|list| cdr(list)}],
+  :list  => [:prim, lambda{|*list| list(*list)}],
+}
 
 $global_env = [$list_env, $primitive_fun_env, $boolean_env]
 
@@ -52,13 +53,18 @@ def list(*list)
 end
 
 def parse(exp)
-  program = exp.strip().gsub(/set!/, 'setq').gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').gsub(/\s+/, ',').gsub(/,+/, ', ').gsub(/\(/, '[').gsub(/\)/, ']')
+  program = exp.strip().
+    gsub(/set!/, 'setq').
+    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
+    gsub(/\s+/, ', ').
+    gsub(/\(/, '[').
+    gsub(/\)/, ']')
   log(program)
   eval(program)
 end
 
 def apply(fun, args)
-  # log "apply fun:#{fun}, args:#{pp(args)}"
+  log "apply fun:#{fun}, args:#{pp(args)}"
   if primitive_fun?(fun)
     apply_primitive_fun(fun, args)
   else
@@ -119,12 +125,12 @@ end
 def lookup_var(var, env)
   #    log "lookup_var: var:#{var}, env: #{env}"
   val = nil
-  env.each { |alist|  
+  env.each do |alist|  
     if alist.key?(var)
       val = alist[var]
       break 
     end
-  }
+  end
   #    log "lookup_var: var:#{var}, val:#{val}"
   if val == nil
     raise "couldn't find value to variables:'#{var}'"
@@ -134,12 +140,12 @@ end
 
 def lookup_var_ref(var, env)
   val = nil
-  env.each { |alist|  
+  env.each do |alist|  
     if alist.key?(var)
       val = alist
       break 
     end
-  }
+  end
   val
 end  
 
@@ -179,7 +185,14 @@ def apply_primitive_fun(fun, args)
 end
 
 def special_form?(exp)
-  lambda?(exp) or let?(exp) or letrec?(exp) or if?(exp) or cond?(exp) or define?(exp) or quote?(exp) or setq?(exp)
+  lambda?(exp) or 
+    let?(exp) or 
+    letrec?(exp) or 
+    if?(exp) or 
+    cond?(exp) or 
+    define?(exp) or 
+    quote?(exp) or 
+    setq?(exp)
 end
 
 def quote?(exp)
@@ -229,8 +242,6 @@ def eval_special_form(exp, env)
     eval_setq(exp, env)
   end
 end
-
-
 
 def eval_setq(exp, env)
   var, val = setq_to_var_val(exp)
@@ -286,20 +297,18 @@ def cond_to_if(cond_exp)
   end  
 end
 
-
 def eval_let(exp, env)
   parameters, args, body = let_to_parameters_args_body(exp)
   new_exp = [[:lambda, parameters, body]] + args
   _eval(new_exp, env)
 end
 
-
 def eval_letrec(exp, env)
   parameters, args, body = letrec_to_parameters_args_body(exp)
   tmp_env = Hash.new
-  parameters.each { |parameter| 
+  parameters.each do |parameter| 
     tmp_env[parameter] = :dummy
-  }
+  end
   ext_env = extend_env(tmp_env.keys(), tmp_env.values(), env)
   args_val = eval_list(args, ext_env)
   set_extend_env_q(parameters, args_val, ext_env)
@@ -308,22 +317,8 @@ def eval_letrec(exp, env)
 end
 
 def set_extend_env_q(parameters, args_val, ext_env)
-  parameters.zip(args_val).each { |parameter, arg_val|
+  parameters.zip(args_val).each do |parameter, arg_val|
     ext_env[0][parameter] = arg_val
-  }
-end
-
-def s(exp)
-  if Array === exp
-    if exp.length == 0 
-      "[]"
-    else
-      str = "["
-      exp.each{|e| str += s(e) + ", "}
-      str[0...str.length-2] + "]"
-    end
-  else
-    exp.to_s()
   end
 end
 
@@ -355,8 +350,7 @@ def _eval(exp, env)
 end
 
 def eval_list(exp, env)
-  r = exp.map{|e| _eval(e, env)}
-  r
+  exp.map{|e| _eval(e, env)}
 end    
 
 def pp(exp)
@@ -464,7 +458,7 @@ $programs_expects =
    [[:list, 1],
     [1]],
    # test repl
-   [parse('(define (length list) (if  (null?, list) 0 (+ (length (cdr list)) 1)))'),
+   [parse('(define (length list) (if  (null? list) 0 (+ (length (cdr list)) 1)))'),
     nil],
    [parse('(length (list 1 2 3))'), 
     3],
@@ -507,9 +501,10 @@ $programs_expects =
   ]
 
 def test
-  $programs_expects.each { |exp, expect| 
+  $programs_expects.each do |exp, expect| 
+    log("test: exp:#{pp(exp)}, expect:#{pp(expect)}, result:#{pp(_eval(exp, $global_env))}")
     assert(_eval(exp, $global_env), expect)
-  }
+  end
 end
 
 test
