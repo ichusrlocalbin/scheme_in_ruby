@@ -9,6 +9,7 @@ platex ${basename}.tex && \
 dvipdfmx ${basename}.dvi && \
 cp ${basename}.pdf ../ && \
 cd .. && \
+cp ${basename}.pdf ../introduction_programming_language.pdf && \
 open ${basename}.pdf
 
 
