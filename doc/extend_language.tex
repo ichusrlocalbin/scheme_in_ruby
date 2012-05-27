@@ -82,7 +82,7 @@ end
 
 みなさんには、こちらの方がなじみがあるかと思います。関数名に続き仮引数と、それに続く関数のボディから成ります。
 
-これを実装するためにはどうすれば良いでしょうか。変数に定義する値を束縛した環境を付け加えます。ポイントは、その後の評価でもその定義が使えるように環境を書き換える必要があることです。また、すでに変数が束縛されている場合には値を書き換えるようにします。これらは環境を代入により上書きします(\_qを使う関数を呼んでいる点に注意しましょう)。
+これを実装するためにはどうすれば良いでしょうか。変数に定義する値を束縛した環境を付け加えます。ポイントは、その後の評価でもその定義が使えるように環境を書き換える必要があることです。また、すでに変数が束縛されている場合には値を書き換えるようにします。これらは環境を代入により上書きします(関数名が!を使う関数を呼んでいる点に注意しましょう)。
 
 \begin{lstlisting}
 def eval_define(exp, env)
@@ -95,12 +95,12 @@ def eval_define(exp, env)
   if var_ref != nil
     var_ref[var] = _eval(val, env)
   else
-    extend_env_q([var], [_eval(val, env)], env)
+    extend_env!([var], [_eval(val, env)], env)
   end
   nil
 end
 
-def extend_env_q(parameters, args, env)
+def extend_env!(parameters, args, env)
   alist = parameters.zip(args)
   h = Hash.new
   alist.each { |k, v| h[k] = v }
@@ -298,7 +298,7 @@ def pp(exp)
     'nil'
   elsif (Array === exp) and (exp[0] == :closure)
     parameter, body, env = exp[1], exp[2], exp[3]
-    "(closure #{pp(parameter)} #{pp(body)}"
+    "(closure #{pp(parameter)} #{pp(body)})"
   elsif lambda?(exp)
     parameters, body = exp[1], exp[2]
     "(lambda #{pp(parameters)} #{pp(body)})"
@@ -310,14 +310,10 @@ def pp(exp)
     elsif exp == $list_env
       '*list_env*'
     else
-      s = "{" 
-      exp.each{|k, v| s+= pp(k) + ":" + pp(v) + ", " }
-      s[0..s.length-3] + "}"
+      '{' + exp.map{|k, v| pp(k) + ':' + pp(v)}.join(', ') + '}'
     end
   elsif Array === exp
-    s = "("
-    exp.each{|e| s+= pp(e)+" " }
-    s[0..s.length-2] + ")"
+    '(' + exp.map{|e| pp(e)}.join(', ') + ')'
   else 
     exp.to_s
   end

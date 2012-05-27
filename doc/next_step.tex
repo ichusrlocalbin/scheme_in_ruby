@@ -18,14 +18,14 @@ Schemeで書くのはつまらないので、今回開発した$\mu$SchemeRで�
 実現してみてください。
 
 実現する上でのヒントです。2ヵ所で代入が必要になります。{\tt letrec}と
-{\tt define}です。代入を実現する{\tt :setq}は次のとおり実現できます。
+{\tt define}です。代入を実現する{\tt :set!}は次のとおり実現できます。
 与えられた変数を与えられた値に束縛するよう環境を書き換えるものです。
 {\tt define}と異なる点は、代入する変数がまだ使われていない場合エラーとする所で
 す。{\tt special\_form?}、{\tt eval\_special\_form}も書き換えるのを忘れ
 ないで下さい。
 
 \begin{lstlisting}
-def eval_setq(exp, env)
+def eval_set!(exp, env)
   var, val = setq_to_var_val(exp)
   var_ref = lookup_var_ref(var, env)
   if var_ref != nil
@@ -45,20 +45,20 @@ def setq? exp
 end
 \end{lstlisting}
 
-またパーサーを次のように書き換えることで、下のようにSchemeのプログラム内で{\tt set!}というSchemeの構文と同じものを使うことが出来るようになります。
+% またパーサーを次のように書き換えることで、下のようにSchemeのプログラム内で{\tt set!}というSchemeの構文と同じものを使うことが出来るようになります。
 
-\begin{lstlisting}
-def parse(exp)
-  program = exp.strip().
-    gsub(/set!/, 'setq').
-    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
-    gsub(/\s+/, ', ').
-    gsub(/\(/, '[').
-    gsub(/\)/, ']')
-  log(program)
-  eval(program)
-end
-\end{lstlisting}
+% \begin{lstlisting}
+% def parse(exp)
+%   program = exp.strip().
+%     gsub(/set!/, 'setq').
+%     gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
+%     gsub(/\s+/, ', ').
+%     gsub(/\(/, '[').
+%     gsub(/\)/, ']')
+%   log(program)
+%   eval(program)
+% end
+% \end{lstlisting}
 
 \begin{lstlisting}
 (let ((x 1)) (let ((dummy (set! x 2))) x))

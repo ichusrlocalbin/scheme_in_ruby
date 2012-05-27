@@ -54,7 +54,6 @@ end
 
 def parse(exp)
   program = exp.strip().
-    gsub(/set!/, 'setq').
     gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
     gsub(/\s+/, ', ').
     gsub(/\(/, '[').
@@ -114,7 +113,7 @@ def extend_env(parameters, args, env)
   [h] + env
 end
 
-def extend_env_q(parameters, args, env)
+def extend_env!(parameters, args, env)
   alist = parameters.zip(args)
   h = Hash.new
   alist.each { |k, v| h[k] = v }
@@ -170,7 +169,7 @@ def eval_define(exp, env)
   if var_ref != nil
     var_ref[var] = _eval(val, env)
   else
-    extend_env_q([var], [_eval(val, env)], env)
+    extend_env!([var], [_eval(val, env)], env)
   end
   nil
 end
@@ -239,11 +238,11 @@ def eval_special_form(exp, env)
   elsif quote?(exp)
     eval_quote(exp, env)
   elsif setq?(exp)
-    eval_setq(exp, env)
+    eval_set!(exp, env)
   end
 end
 
-def eval_setq(exp, env)
+def eval_set!(exp, env)
   var, val = setq_to_var_val(exp)
   var_ref = lookup_var_ref(var, env)
   if var_ref != nil
@@ -259,7 +258,7 @@ def setq_to_var_val(exp)
 end
 
 def setq? exp
-  exp[0] == :setq
+  exp[0] == :set!
 end
 
 def eval_quote(exp, env)
@@ -311,12 +310,12 @@ def eval_letrec(exp, env)
   end
   ext_env = extend_env(tmp_env.keys(), tmp_env.values(), env)
   args_val = eval_list(args, ext_env)
-  set_extend_env_q(parameters, args_val, ext_env)
+  set_extend_env!(parameters, args_val, ext_env)
   new_exp = [[:lambda, parameters, body]] + args
   _eval(new_exp, ext_env)
 end
 
-def set_extend_env_q(parameters, args_val, ext_env)
+def set_extend_env!(parameters, args_val, ext_env)
   parameters.zip(args_val).each do |parameter, arg_val|
     ext_env[0][parameter] = arg_val
   end
@@ -372,14 +371,10 @@ def pp(exp)
     elsif exp == $list_env
       '*list_env*'
     else
-      s = "{" 
-      exp.each{|k, v| s+= pp(k) + ":" + pp(v) + ", " }
-      s[0..s.length-3] + "}"
+      '{' + exp.map{|k, v| pp(k) + ':' + pp(v)}.join(', ') + '}'
     end
   elsif Array === exp
-    s = "("
-    exp.each{|e| s+= pp(e)+" " }
-    s[0..s.length-2] + ")"
+    '(' + exp.map{|e| pp(e)}.join(', ') + ')'
   else 
     exp.to_s
   end
@@ -450,9 +445,9 @@ $programs_expects =
     nil],
    [:x,
     5],
-   # test setq
+   # test set!
    [[:let, [[:x, 1]],
-     [:let, [[:dummy, [:setq, :x, 2]]],
+     [:let, [[:dummy, [:set!, :x, 2]]],
       :x]], 2],
    # test list
    [[:list, 1],
