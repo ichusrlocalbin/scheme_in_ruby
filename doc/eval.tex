@@ -43,7 +43,7 @@
 
 {\tt \_eval}\footnote{{\tt eval}としないで{\tt \_eval}としているのは、Rubyの組み込み関数として{\tt eval}が定義されているためです。気になる人は、Rubyの{\tt module}機能を使って名前空間を分け、{\tt \_eval}を{\tt eval}として定義しなおして下さい。またその際は、p. \pageref{fun:parse}の{\tt parse}で使われる{\tt eval}は{\tt Kernel::eval}に置き換えて下さい。}は、与えられた式{\tt exp}を評価し、その結果を返します。
 
-式がリストであった場合、最初の要素を関数として、残りを引数として、それぞれを評価してその値を求めます。求めた関数に求めた引数の値を適用(apply)してその結果を{\tt \_eval}の結果とします\footnote{Rubyでは、関数の最後に評価した式の値が関数の返り値になります。関数型言語では{\tt return} {\it {\tt <}値{\tt >}}と書かずに、このような書き方を一般的にします。本文書では、関数型言語の考え方に近づくようにこの記述を利用していきます。}。一方、リストでない場合、数字であれば即値として扱い数字そのものを返します。例えば{\tt 2}は2を返します。そうでなければ、組み込み関数とみなし、それに関連付けられた(Ruby上での)関数を返します。
+式がリストであった場合、最初の要素を関数として、残りを引数として、それぞれを評価してその値を求めます。求めた関数に求めた引数の値を適用(apply)してその結果を{\tt \_eval}の結果とします\footnote{Rubyでは、関数の最後に評価した式の値が関数の返り値になります。一般的に関数型言語では{\tt return} {\it {\tt <}値{\tt >}}と書かずに、このような書き方をします。本文書では、関数型言語の考え方に近づくようにこの記述を利用していきます。}。一方、リストでない場合、数字であれば即値として扱い数字そのものを返します。例えば{\tt 2}は2を返します。そうでなければ、組み込み関数とみなし、それに関連付けられた(Ruby上での)関数を返します。
 
 \begin{lstlisting}
 def _eval(exp)
@@ -126,7 +126,7 @@ end
 \end{lstlisting}
 
 関数適用は、引数の評価値(Ruby上の値になります)を(Ruby上の)関数へ適用しています。
-{\tt fun\_val[*args]}は、{\tt fun\_val}というRuby上の関数を引数を{\tt args}で呼び出します。{\tt *}は、可変長引数に対応しており、{\tt args}が{\tt [1, 2]}の場合{\tt fun\_val[1, 2]}と展開され、{\tt args}が{\tt [1, 2, 3]}の場合{\tt fun\_val[1, 2, 3]}と展開されます。
+{\tt fun\_val.call(*args)}は、{\tt fun\_val}というRuby上の関数を引数{\tt args}で呼び出します。{\tt *}は、可変長引数に対応しており、{\tt args}が{\tt [1, 2]}の場合{\tt fun\_val[1, 2]}と展開され、{\tt args}が{\tt [1, 2, 3]}の場合{\tt fun\_val[1, 2, 3]}と展開されます。
 
 \begin{lstlisting}
 def apply(fun, args)
@@ -135,7 +135,7 @@ end
 
 def apply_primitive_fun(fun, args)
   fun_val = fun[1]
-  fun_val[*args]
+  fun_val.call(*args)
 end
 
 def primitive_fun? exp

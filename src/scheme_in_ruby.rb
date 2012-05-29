@@ -180,7 +180,7 @@ end
 
 def apply_primitive_fun(fun, args)
   fun_val = fun[1]
-  fun_val[*args]
+  fun_val.call(*args)
 end
 
 def special_form?(exp)
