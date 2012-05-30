@@ -72,6 +72,11 @@
 	\color{black}
 	\large \ }
 
+\newcommand{\todayd}{%
+\the\year/{\ifnum \month < 10 0\the\month \else \the\month \fi}/%
+{\ifnum \day < 10 0\the\day \else \the\day \fi}}
+\newcommand{\todaye}{\the\year--\the\month--\the\day}
+
 \newenvironment{result}
 {
 \begin{center}
@@ -143,7 +148,9 @@
 % Author and supervisor
 \begin{minipage}{0.4\textwidth}
 \begin{flushright} \large
-{\large 2012/5/25} \\
+% {\large 2012/5/25} \\
+% {\large \today} \\
+{\large \todayd} \\
 
 % lastname \textsc{firstname}
 watanabe

@@ -283,11 +283,17 @@ end
 \begin{lstlisting}
 def repl
   command_char = '>>> '
-  print command_char
-  while line = STDIN.gets
-    val = _eval(parse(line), $global_env)
-    puts pp(val)
+  while true
     print command_char
+    line = gets or break
+    redo if line =~ /^\s*$/
+    begin
+      val = _eval(parse(line), $global_env)
+    rescue Exception => e
+      puts e.to_s
+      redo
+    end
+    puts pp(val)
   end
 end
 

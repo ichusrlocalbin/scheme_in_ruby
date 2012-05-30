@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-
-DEBUG = false
+# $DEBUG = true
 
 $primitive_fun_env = {
   :+  => [:prim, lambda{|x, y| x + y}],
@@ -54,7 +53,7 @@ end
 
 def parse(exp)
   program = exp.strip().
-    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
+    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=!*]*/, ':\\0').
     gsub(/\s+/, ', ').
     gsub(/\(/, '[').
     gsub(/\)/, ']')
@@ -382,16 +381,22 @@ end
 
 def repl
   command_char = '>>> '
-  print command_char
-  while line = STDIN.gets
-    val = _eval(parse(line), $global_env)
-    puts pp(val)
+  while true
     print command_char
+    line = gets or break
+    redo if line =~ /^\s*$/
+    begin
+      val = _eval(parse(line), $global_env)
+    rescue Exception => e
+      puts e.to_s
+      redo
+    end
+    puts pp(val)
   end
 end
 
 def log(message)
-  if (DEBUG)
+  if ($DEBUG)
     puts message
   end
 end
