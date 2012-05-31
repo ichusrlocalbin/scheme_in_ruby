@@ -282,11 +282,17 @@ end
 
 \begin{lstlisting}
 def repl
-  command_char = '>>> '
+  prompt = '>>> '
+  second_prompt = '> ' 
   while true
-    print command_char
-    line = gets or break
-    redo if line =~ /^\s*$/
+    print prompt
+    line = gets or return
+    while line.count('(') > line.count(')') 
+      print second_prompt
+      next_line = gets or return
+      line += next_line
+    end
+    redo if line =~ /\A\s*\z/m 
     begin
       val = _eval(parse(line), $global_env)
     rescue Exception => e
@@ -338,7 +344,7 @@ nil
 
 実行出来ました。
 
-評価する式を改行を許さず1行で書く必要がありますが、今までよりはずいぶん楽になるのではないでしょうか。
+今までよりはずいぶん楽になるのではないでしょうか。
 
 \section{その他}
 他に不便なところはありませんか。まだまだあるでしょう。実現していない機能は多々あります。{\tt named let}や{\tt let*}などの機能を調べそ実装にトライしてみて下さい。

@@ -380,11 +380,17 @@ def pp(exp)
 end
 
 def repl
-  command_char = '>>> '
+  prompt = '>>> '
+  second_prompt = '> ' 
   while true
-    print command_char
-    line = gets or break
-    redo if line =~ /^\s*$/
+    print prompt
+    line = gets or return
+    while line.count('(') > line.count(')') 
+      print second_prompt
+      next_line = gets or return
+      line += next_line
+    end
+    redo if line =~ /\A\s*\z/m 
     begin
       val = _eval(parse(line), $global_env)
     rescue Exception => e
@@ -409,6 +415,13 @@ end
 
 $programs_expects =
   [
+   # test environment
+   [[[:lambda, [:x],
+      [:+, 
+       [[:lambda, [:x], :x], 2],
+       :x]], 
+     1],
+    3],
    # test let
    [[:let, [[:x, 2], [:y, 3]], [:+, :x, :y]],
     5],
