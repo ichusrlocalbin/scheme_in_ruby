@@ -96,17 +96,11 @@ add(3, 2)
 
 \begin{lstlisting}
 def lookup_var(var, env)
-  val = nil
-  env.each do |alist|  
-    if alist.key?(var)
-      val = alist[var]
-      break 
-    end
-  begin
-  if val == nil
+  alist = env.find{|alist| alist.key?(var)}
+  if alist == nil
     raise "couldn't find value to variables:'#{var}'"
   end
-  val
+  alist[var]
 end  
 \end{lstlisting}
 
@@ -297,7 +291,7 @@ puts _eval(exp, $global_env)
 
 \section{λ式とクロージャの違い}
 
-ここまで読んできた皆さんなら、λ式とクロージャの違いをよく理解しているでしょう。λ式は単なるプログラムのコードであり、クロージャはλ式とそれを評価した時の環境のペアです。λ式を評価するとクロージャが値となります。このクロージャを関数適用するときは、(仮引数を引数に束縛し拡張した)クロージャ中の環境でλ式を評価します。
+ここまで読んできた皆さんなら、λ式とクロージャの違いをよく理解しているでしょう。λ式は単なるプログラムのコードであり、クロージャはλ式とそれを評価した時の環境のペアです。λ式を評価するとクロージャがその評価値となります。このクロージャを関数適用するときは、クロージャ中の環境(仮引数を引数に束縛し拡張した環境)でλ式を評価します。
 
 λ式扱うことができるプログラミング言語は、関数を値として扱う関数、すな
 わち高階関数としてFORTRANなど古くから存在してきました。値として扱うとは、

@@ -70,19 +70,19 @@ def apply(fun, args)
   end
 end
 
-def list? exp
-  Array === exp
+def list?(exp)
+  exp.is_a?(Array)
 end
 
-def immediate_val? exp
+def immediate_val?(exp)
   num?(exp) 
 end
 
-def num? exp
-  Numeric === exp
+def num?(exp)
+  exp.is_a?(Numeric)
 end
 
-def primitive_fun? exp
+def primitive_fun?(exp)
   exp[0] == :prim
 end
 
@@ -122,29 +122,16 @@ end
 
 def lookup_var(var, env)
   #    log "lookup_var: var:#{var}, env: #{env}"
-  val = nil
-  env.each do |alist|  
-    if alist.key?(var)
-      val = alist[var]
-      break 
-    end
-  end
-  #    log "lookup_var: var:#{var}, val:#{val}"
-  if val == nil
+  alist = env.find{|alist| alist.key?(var)}
+  # log "lookup_var: var:#{var}, val:#{alist.nil? ? nil : alist[var]}"
+  if alist == nil
     raise "couldn't find value to variables:'#{var}'"
   end
-  val
+  alist[var]
 end  
 
 def lookup_var_ref(var, env)
-  val = nil
-  env.each do |alist|  
-    if alist.key?(var)
-      val = alist
-      break 
-    end
-  end
-  val
+  env.find{|alist| alist.key?(var)}
 end  
 
 def define_with_parameter?(exp)
@@ -256,7 +243,7 @@ def setq_to_var_val(exp)
   [exp[1], exp[2]]
 end
 
-def setq? exp
+def setq?(exp)
   exp[0] == :set!
 end
 
@@ -352,17 +339,17 @@ def eval_list(exp, env)
 end    
 
 def pp(exp)
-  if Symbol === exp or num?(exp)
+  if exp.is_a?(Symbol) or num?(exp)
     exp.to_s
   elsif exp == nil
     'nil'
-  elsif (Array === exp) and (exp[0] == :closure)
+  elsif exp.is_a?(Array) and (exp[0] == :closure)
     parameter, body, env = exp[1], exp[2], exp[3]
     "(closure #{pp(parameter)} #{pp(body)})"
   elsif lambda?(exp)
     parameters, body = exp[1], exp[2]
     "(lambda #{pp(parameters)} #{pp(body)})"
-  elsif Hash === exp
+  elsif exp.is_a?(Hash)
     if exp == $primitive_fun_env
       '*prinmitive_fun_env*'
     elsif exp == $boolean_env
@@ -372,7 +359,7 @@ def pp(exp)
     else
       '{' + exp.map{|k, v| pp(k) + ':' + pp(v)}.join(', ') + '}'
     end
-  elsif Array === exp
+  elsif exp.is_a?(Array)
     '(' + exp.map{|e| pp(e)}.join(', ') + ')'
   else 
     exp.to_s

@@ -123,14 +123,7 @@ def define_var_val(exp)
 end
 
 def lookup_var_ref(var, env)
-  val = nil
-  env.each do |alist|  
-    if alist.key?(var)
-      val = alist
-      break 
-    end
-  end
-  val
+  env.find{|alist| alist.key?(var)}
 end  
 
 def define?(exp)
@@ -143,7 +136,8 @@ eval\_special\_form}を追記する必要があります。}。
 
 \begin{lstlisting}
 [:define, [:length, :list], 
- [:if, [:null?, :list], 0, 
+ [:if, [:null?, :list], 
+  0, 
   [:+, [:length, [:cdr, :list]], 1]]]
 [:length, [:list, 1, 2]]
 \end{lstlisting}
@@ -304,17 +298,17 @@ def repl
 end
 
 def pp(exp)
-  if Symbol === exp or num?(exp)
+  if exp.is_a?(Symbol) or num?(exp)
     exp.to_s
   elsif exp == nil
     'nil'
-  elsif (Array === exp) and (exp[0] == :closure)
+  elsif exp.is_a?(Array) and (exp[0] == :closure)
     parameter, body, env = exp[1], exp[2], exp[3]
     "(closure #{pp(parameter)} #{pp(body)})"
   elsif lambda?(exp)
     parameters, body = exp[1], exp[2]
     "(lambda #{pp(parameters)} #{pp(body)})"
-  elsif Hash === exp
+  elsif exp.is_a?(Hash)
     if exp == $primitive_fun_env
       '*prinmitive_fun_env*'
     elsif exp == $boolean_env
@@ -324,7 +318,7 @@ def pp(exp)
     else
       '{' + exp.map{|k, v| pp(k) + ':' + pp(v)}.join(', ') + '}'
     end
-  elsif Array === exp
+  elsif exp.is_a?(Array)
     '(' + exp.map{|e| pp(e)}.join(', ') + ')'
   else 
     exp.to_s

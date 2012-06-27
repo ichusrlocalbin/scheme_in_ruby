@@ -74,7 +74,7 @@ end
 
 \begin{lstlisting}
 def list?(exp)
-  Array === exp
+  exp.is_a?(Array)
 end
 \end{lstlisting}
 
@@ -94,7 +94,7 @@ $primitive_fun_env = {
 }
 \end{lstlisting}
 
-{\tt car}はリストの先頭の要素を、{\tt cdr}は先頭の要素以降のリストを取得する関数です。この名前は奇妙ですが、Schemeで使われている名前ですので我慢してください。そのうち慣れます。
+{\tt car}はリストの先頭の要素を、{\tt cdr}は先頭の要素以降のリストを取得する関数です。この名前は奇妙\footnote{carはContents of the Address part of Register、cdrはContents of the Decrement part of Register、後で出てくるconsはCONStructから来ています。これらはLispが開発されたIBMの計算機の機械語に由来しています。} ですが、Schemeで使われている名前ですので我慢してください。そのうち慣れてくるでしょう。
 
 \begin{lstlisting}
 def car(list)
@@ -117,17 +117,17 @@ end
 そのままの値を返す即値として数字を定義しています。
 
 \begin{lstlisting}
-def immediate_val? exp
+def immediate_val?(exp)
   num?(exp) 
 end
 
-def num? exp
-  Numeric === exp
+def num?(exp)
+  exp.is_a?(Numeric)
 end
 \end{lstlisting}
 
 関数適用は、引数の評価値(Ruby上の値になります)を(Ruby上の)関数へ適用しています。
-{\tt fun\_val.call(*args)}は、{\tt fun\_val}というRuby上の関数を引数{\tt args}で呼び出します。{\tt *}は、可変長引数に対応しており、{\tt args}が{\tt [1, 2]}の場合{\tt fun\_val[1, 2]}と展開され、{\tt args}が{\tt [1, 2, 3]}の場合{\tt fun\_val[1, 2, 3]}と展開されます。
+{\tt fun\_val.call(*args)}は、{\tt fun\_val}というRuby上の関数を引数{\tt args}で呼び出します。{\tt *}は、可変長引数に対応しており、{\tt args}が{\tt [1, 2]}の場合{\tt fun\_val.call(1, 2)}と展開され、{\tt args}が{\tt [1, 2, 3]}の場合{\tt fun\_val.call(1, 2, 3)}と展開されます。
 
 \begin{lstlisting}
 def apply(fun, args)
@@ -139,7 +139,7 @@ def apply_primitive_fun(fun, args)
   fun_val.call(*args)
 end
 
-def primitive_fun? exp
+def primitive_fun?(exp)
   exp[0] == :prim
 end
 \end{lstlisting}
