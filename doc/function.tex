@@ -241,9 +241,8 @@ end
 def eval_special_form(exp, env)
   if lambda?(exp)
     eval_lambda(exp, env)
-  else
-    let?(exp)
-      eval_let(exp, env)
+  elsif let?(exp)
+    eval_let(exp, env)
   end
 end
 
@@ -282,7 +281,7 @@ puts _eval(exp, $global_env)
    [:+, [:fun, 1], [:fun, 2]]]]
 \end{lstlisting}
 
-{\tt :fun}を束縛したλ式中の{\tt :x}はその中で値を束縛していないにも関わらず利用できる点に注意して下さい\footnote{最後に定義するdefineなどを利用することで$\{x:3\}$の外でfunを使うことが出来るようになります}。これはクロージャが環境を持っているからです。
+{\tt :fun}を束縛したλ式中の{\tt :x}はその中で値を束縛していないにも関わらず利用できる点に注意して下さい\footnote{p. \pageref{column:closure}でもう少し強力な例を示します。}。これはクロージャが環境を持っているからです。
 
 \section{評価(eval)と関数適用(apply)}
 

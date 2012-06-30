@@ -44,7 +44,7 @@ def car(list)
 end
 
 def cdr(list)
-  list[1...list.length]
+  list[1..-1]
 end
 
 def list(*list)
