@@ -41,7 +41,7 @@ def cons(a, b)
 end
 \end{lstlisting}
 
-{\tt car}, {\tt cdr}はそれぞれリストの先頭の要素、および先頭の要素を除いたリストを返します。
+(以前定義していますが){\tt car}, {\tt cdr}はそれぞれリストの先頭の要素、および先頭の要素を除いたリストを返します。
 
 \begin{lstlisting}
 def car(list)
@@ -49,7 +49,7 @@ def car(list)
 end
 
 def cdr(list)
-  list[1...list.length]
+  list[1..-1]
 end
 \end{lstlisting}
 
@@ -207,7 +207,7 @@ puts _eval(parse('(length (list 1 2 3))'), $global_env)
 \begin{lstlisting}
 def parse(exp)
   program = exp.strip().
-    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=*]*/, ':\\0').
+    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=!*]*/, ':\\0').
     gsub(/\s+/, ', ').
     gsub(/\(/, '[').
     gsub(/\)/, ']')
