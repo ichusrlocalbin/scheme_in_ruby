@@ -199,8 +199,8 @@ _eval(parse('(define (length list) (if  (null?, list) 0 (+ (length (cdr list)) 1
 puts _eval(parse('(length (list 1 2 3))'), $global_env)
 \end{lstlisting}
 
-これは、“{\tt [}”, “{\tt ]}”を “{\tt (}”, “{\tt )}”
-に、変数をRubyのシンボルに置き換え、“{\tt ,}”を削除することにより実現します。
+これは、“{\tt (}”, “{\tt )}”を “{\tt [}”, “{\tt ]}”
+に、変数をRubyのシンボルに置き換えるため“{\tt :}”を変数の先頭に追加し、空白を“{\tt ,}”に置換するより実現します。
 
 \label{fun:parse}
 
