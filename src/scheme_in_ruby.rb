@@ -116,7 +116,7 @@ def extend_env!(parameters, args, env)
   alist = parameters.zip(args)
   h = Hash.new
   alist.each { |k, v| h[k] = v }
-  env.unshift(h)
+  env.insert(0, h)
 end
 
 
@@ -498,12 +498,26 @@ $programs_expects =
             
             [:fact, [:-, :n, 1]]]]]]]]], 
      [:fact, 2]], 2],
+   # closure
+   [parse(
+<<EOS
+(define (makecounter)
+  (let ((count 0))
+    (lambda ()
+      (let ((dummy (set! count (+ count 1))))
+	count))))
+EOS
+), nil],
+   [parse('(define inc (makecounter))'), nil],
+   [parse('(inc)'), 1],
+   [parse('(inc)'), 2],
   ]
 
 def test
   $programs_expects.each do |exp, expect| 
-    log("test: exp:#{pp(exp)}, expect:#{pp(expect)}, result:#{pp(_eval(exp, $global_env))}")
-    assert(_eval(exp, $global_env), expect)
+    val = _eval(exp, $global_env)
+    log("test: exp:#{pp(exp)}, expect:#{pp(expect)}, result:#{pp(val)}")
+    assert(val, expect)
   end
 end
 
