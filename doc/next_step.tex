@@ -24,6 +24,7 @@ Schemeで書くのはつまらないので、今回開発した$\mu$SchemeRで�
 す。{\tt special\_form?}、{\tt eval\_special\_form}も書き換えるのを忘れ
 ないで下さい。
 
+\label{list:setq}
 \begin{lstlisting}
 def eval_set!(exp, env)
   var, val = setq_to_var_val(exp)
