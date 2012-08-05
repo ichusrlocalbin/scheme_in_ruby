@@ -159,10 +159,6 @@ def apply_primitive_fun(fun, args)
   fun_val = fun[1]
   fun_val.call(*args)
 end
-
-def primitive_fun?(exp)
-  exp[0] == :prim
-end
 \end{lstlisting}
 
 実際に、{\tt [:+, 1, 2]}を評価するときの動きを図\ref{fig:uschemer_ruby}を見ながら追ってみましょう。与えるプログラムはリストですので、まず先頭の要素{\tt :+}を評価し、$lambda\{|x, y| x + y\}$を値として得ます。これは、二つの引数を足す(Ruby上の)関数です。次に{\tt 1}, {\tt 2}を評価し、それぞれ(Ruby上での)1, 2を得ます。これを(Ruby上で)適用することで、3を得ます。この値はputsを使って、Ruby上のプログラムで表示することができます\footnote{今回作成している$\mu$SchemeR上でも、表示出来まるようにしますが、後のお楽しみとします。}。

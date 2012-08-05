@@ -258,6 +258,10 @@ def apply(fun, args)
     lambda_apply(fun, args)
   end
 end
+
+def primitive_fun?(exp)
+  exp[0] == :prim
+end
 \end{lstlisting}
 
 ユーザプログラムの評価に使う大域環境を用意します。大域環境には組み込み関数を設定します。これにより、組み込み関数を変数と同じように{\tt lookup\_var}で扱うことが出来ます。
