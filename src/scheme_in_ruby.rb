@@ -338,15 +338,19 @@ def eval_list(exp, env)
   exp.map{|e| _eval(e, env)}
 end    
 
+def closure?(exp)
+  exp[0] == :closure
+end
+
 def pp(exp)
   if exp.is_a?(Symbol) or num?(exp)
     exp.to_s
   elsif exp == nil
     'nil'
-  elsif exp.is_a?(Array) and (exp[0] == :closure)
+  elsif exp.is_a?(Array) and closure?(exp)
     parameter, body, env = exp[1], exp[2], exp[3]
     "(closure #{pp(parameter)} #{pp(body)})"
-  elsif lambda?(exp)
+  elsif exp.is_a?(Array) and lambda?(exp)
     parameters, body = exp[1], exp[2]
     "(lambda #{pp(parameters)} #{pp(body)})"
   elsif exp.is_a?(Hash)
