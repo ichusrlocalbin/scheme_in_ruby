@@ -21,4 +21,10 @@ dvipdfmx ${basename}.dvi && \
 cp ${basename}.pdf ../ && \
 cd .. && \
 cp ${basename}.pdf ../introduction_programming_language_a5.pdf
+basename=book
+cd tmp
+../latex2epub.rb && \
+cp ${basename}.epub ../ 
+cd .. 
+cp ${basename}.epub ../introduction_programming_language.epub
 open ../introduction_programming_language.pdf
