@@ -7,15 +7,15 @@
 # ブック名(ファイル名になるもの。ASCII範囲の文字を使用)
 bookname: book
 # 書名
-booktitle: つくって学ぶプログラミング言語 ～RubyによるScheme処理系の実装～
+booktitle: つくって学ぶプログラミング言語　RubyによるScheme処理系の実装
 # 著者
 aut: 渡辺昌寛
 prt: 達人出版会
 prt_url:  http://tatsu-zine.com/
 edt: 高橋征義
-date: 2012-12-20
+date: 2013-04-14
 rights: |
-  (C) 2012 Masahiro Watanabe
+  (C) 2013 Masahiro Watanabe
 description: (未定)
 # 以下はオプション
 # prt: 出版社
@@ -36,7 +36,7 @@ coverfile: _cover.html
 # coverimage: 表紙用画像ファイル
 coverimage: cover.jpg
 # 固有IDに使用するドメイン
-urnid: http://tatsu-zine.com/books/prog_lang/
+urnid: http://tatsu-zine.com/books/scheme-in-ruby/
 # CSSファイル (yamlファイルおよびReVIEWファイルを置いたディレクトリにあること
 stylesheet: main.css
 # 目次として抽出するレベル
@@ -52,5 +52,5 @@ colophon: true
 texstyle: tatsumacro
 texdocumentclass: ["jsbook", "oneside,12pt"]
 pubhistory: |
-  2012年12月20日 v0.8.0版発行
+  2013年4月14日 v1.0.0版発行
 debug: true
