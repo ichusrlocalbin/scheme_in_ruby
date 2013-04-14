@@ -27,6 +27,40 @@
 
 \urlstyle{same}
 
+\usepackage{listings,jlisting}
+
+\renewcommand{\lstlistingname}{\small \bf Code} 
+\lstset{%
+	frame=shadowbox,
+	backgroundcolor={\color[gray]{.97}},
+	stringstyle={\ttfamily \color[rgb]{0,0,1}},
+	commentstyle={\color[rgb]{1,0,1}},
+%	commentstyle={\itshape \color[gray]{0.6}},
+	identifierstyle={\ttfamily},
+%	identifierstyle={\bfseries},
+	keywordstyle={\ttfamily \color[rgb]{0,0.5,0}},
+%	keywordstyle={\bfseries \color[gray]{0.4}},
+	basicstyle={\ttfamily},
+%	basicstyle={\bfseries},
+	breaklines=true,
+%%%%	xleftmargin=4zw,
+%%%%	xrightmargin=4zw,
+	xleftmargin=0zw,
+	xrightmargin=0zw,
+	framerule=.2pt,
+	columns=[l]{fullflexible},
+	numbers=none,
+%  stepnumber=5,
+	numberstyle={\scriptsize},
+	numbersep=1em,
+	language={Ruby},
+	lineskip=-0.5zw,
+	morecomment={[s][{\color[cmyk]{1,0,0,0}}]{/**}{*/}},
+	showstringspaces=false,
+	tabsize = 5,
+%	escapechar=\?,
+}
+
 %%Helveticaを使う
 \renewcommand{\sfdefault}{phv}
 
