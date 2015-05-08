@@ -1,31 +1,51 @@
 #!/usr/bin/env ruby
-# $DEBUG = true
+# $DEBUG  = true
+# $DEBUG2 = true
 
 $primitive_fun_env = {
-  :+  => [:prim, lambda{|x, y| x + y}],
-  :-  => [:prim, lambda{|x, y| x - y}],
-  :*  => [:prim, lambda{|x, y| x * y}],
-  :>  => [:prim, lambda{|x, y| x > y}],
-  :>= => [:prim, lambda{|x, y| x >= y}],
-  :<  => [:prim, lambda{|x, y| x <  y}],
-  :<= => [:prim, lambda{|x, y| x <= y}],
-  :== => [:prim, lambda{|x, y| x == y}],
+  :+       => [:prim, lambda{|x, y| x + y}],
+  :-       => [:prim, lambda{|x, y| x - y}],
+  :*       => [:prim, lambda{|x, y| x * y}],
+  :>       => [:prim, lambda{|x, y| x > y}],
+  :>=      => [:prim, lambda{|x, y| x >= y}],
+  :<       => [:prim, lambda{|x, y| x <  y}],
+  :<=      => [:prim, lambda{|x, y| x <= y}],
+  :==      => [:prim, lambda{|x, y| x == y}],
+  :eq?     => [:prim, lambda{|x, y| x == y}],
+  :number? => [:prim, lambda{|exp| num?(exp)}],
+  :_apply_primitive_fun \
+       => [:prim, lambda{|fun, args| _apply_primitive_fun(fun, args)}],
 }
 
 $boolean_env = {
-  :true => true, :false => false
+  :true => true, :false => false,
+  :not  => [:prim, lambda{|e| not e }]
 }
 
 $list_env = {
-  :nil   => [],
-  :null? => [:prim, lambda{|list| null?(list)}],
-  :cons  => [:prim, lambda{|a, b| cons(a, b)}],
-  :car   => [:prim, lambda{|list| car(list)}],
-  :cdr   => [:prim, lambda{|list| cdr(list)}],
-  :list  => [:prim, lambda{|*list| list(*list)}],
+  :nil      => [],
+  :null?    => [:prim, lambda{|list|  null?(list)}],
+  :cons     => [:prim, lambda{|a, b|  cons(a, b)}],
+  :car      => [:prim, lambda{|list|  car(list)}],
+  :cdr      => [:prim, lambda{|list|  cdr(list)}],
+  :list     => [:prim, lambda{|*list| list(*list)}],
+  :list?    => [:prim, lambda{|exp|   list?(exp)}],
+  :atom?    => [:prim, lambda{|exp|   atom?(exp)}]
 }
 
-$global_env = [$list_env, $primitive_fun_env, $boolean_env]
+$debug_env = {
+  :print => [:prim, lambda{|exp| puts(exp.inspect) if $DEBUG2; exp}]
+}
+
+$global_env = [$list_env, $primitive_fun_env, $boolean_env, $debug_env]
+
+def null?(list)
+  list == []
+end
+
+def atom?(exp)
+  not exp.is_a?(Array)
+end
 
 def cons(a, b)
   if not list?(b)
@@ -33,10 +53,6 @@ def cons(a, b)
   else
     [a] + b
   end
-end
-
-def null?(list)
-  list == []
 end
 
 def car(list)
@@ -47,13 +63,29 @@ def cdr(list)
   list[1..-1]
 end
 
+def list?(exp)
+  exp.is_a?(Array)
+end
+
 def list(*list)
   list
 end
 
+def macro_quote(s)
+# written by dosaka
+  s = s.clone
+  while s.sub!(/'([^()]+|(?<pa>\((\?:\s|[^()]+|\g<pa>)*\)))/) {|m|
+      m.sub(/^'(.*)$/, "(quote \\1)")
+    }
+  end
+  s
+end
+
 def parse(exp)
-  program = exp.strip().
-    gsub(/[a-zA-Z\+\-\*><=][0-9a-zA-Z\+\-=!*]*/, ':\\0').
+  program = macro_quote(exp.strip()).
+    # gsub(/'([^()]+|(?<quote>\((\?:\s|[^()]+|\g<quote>)*\)))/, 
+    #      '(quote \k<quote>)').
+    gsub(/[a-zA-Z_\+\-\*><=][0-9a-zA-Z_\+\-=!*]*/, ':\\0').
     gsub(/\s+/, ', ').
     gsub(/\(/, '[').
     gsub(/\)/, ']')
@@ -68,10 +100,6 @@ def apply(fun, args)
   else
     lambda_apply(fun, args)
   end
-end
-
-def list?(exp)
-  exp.is_a?(Array)
 end
 
 def immediate_val?(exp)
@@ -119,7 +147,6 @@ def extend_env!(parameters, args, env)
   env.insert(0, h)
 end
 
-
 def lookup_var(var, env)
   #    log "lookup_var: var:#{var}, env: #{env}"
   alist = env.find{|alist| alist.key?(var)}
@@ -162,6 +189,10 @@ end
 
 def define_var_val(exp)
   [exp[1], exp[2]]
+end
+
+def _apply_primitive_fun(fun_symbol, args)
+  apply_primitive_fun($primitive_fun_env[fun_symbol], args)
 end
 
 def apply_primitive_fun(fun, args)
@@ -317,7 +348,7 @@ end
 
 def _eval(exp, env)
   log("eval :exp: #{pp(exp)}, env:#{pp(env)}")
-  if not list?(exp)
+  if atom?(exp)
     if immediate_val?(exp)
       exp
     else 
@@ -364,7 +395,7 @@ def pp(exp)
       '{' + exp.map{|k, v| pp(k) + ':' + pp(v)}.join(', ') + '}'
     end
   elsif exp.is_a?(Array)
-    '(' + exp.map{|e| pp(e)}.join(', ') + ')'
+    '(' + exp.map{|e| pp(e)}.join(' ') + ')'
   else 
     exp.to_s
   end
@@ -527,4 +558,6 @@ end
 
 test
 
-
+if $0 == __FILE__
+  repl
+end
