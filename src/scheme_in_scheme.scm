@@ -20,26 +20,22 @@
 (define (append list1 list2)
   (if (null? list1)
       list2
-    (cons (car list1) (append (cdr list1) list2))))
+      (cons (car list1) (append (cdr list1) list2))))
 
 (define (reverse l)
   (if (null? l)
       '()
-    (append (reverse (cdr l)) (list (car l)))))
+      (append (reverse (cdr l)) (list (car l)))))
 
 (define (map fun list)
   (if (null? list) 
       '()
       (cons (fun (car list)) (map fun (cdr list)))))
 
-(define (map2 fun list1 list2)
-  (let ((_fun (lambda (lambda (pair) (fun (car pair) (cadr pair))))))
-    (map _fun (zip list1 list2))))
-
 (define (zip list1 list2)
   (if (null? list1)
       '()
-    (cons (list (car list1) (car list2)) (zip (cdr list1) (cdr list2)))))
+      (cons (list (car list1) (car list2)) (zip (cdr list1) (cdr list2)))))
 
 (define (fold fun accum list)
   (if (null? list)

@@ -75,15 +75,20 @@
 
 
 %% @<sub>を有効に
-\usepackage{fixltx2e}
+% comment out by watanabe
+% cf. https://github.com/kmuto/review/issues/344
+% cf. http://tex.stackexchange.com/questions/204410/package-fixltx2e-conflicts-with-float-and-cannot-be-resolved-in-lyx
+% \usepackage{fixltx2e}
 
 % appendixから「付録X」を削除
-\renewcommand{\appendix}{\par
-  %\setcounter{chapter}{0}%
-  %\setcounter{section}{0}%
-  \gdef\@chapapp{}%
-  \gdef\@chappos{}%
-  \gdef\thechapter{}}
+% comment out by watanabe
+%% \renewcommand{\appendix}{\par
+%%   %\setcounter{chapter}{0}%
+%%   %\setcounter{section}{0}%
+%%   \gdef\@chapapp{}% 
+%%   \gdef\@chappos{}%
+%%   \gdef\thechapter{}}
+
 
 %%色修正
 \definecolor{shadecolorb}{gray}{0.5}
