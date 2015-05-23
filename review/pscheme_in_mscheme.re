@@ -92,13 +92,14 @@ def apply_primitive_fun(fun, args)
 end
 //}
 
-最後に、クオート文字「@<tt>{'}」を含む式 @<tt>{'(exp)}を @<tt>{(quote exp)}に展開する機能を作成します。@<tt>{macro_quote}でRuby 1.9から導入された再帰型の正規表現を使っています@<fn>{fn2}。これにより、ネストされたクオート文字も正しく展開できるようになります。パーサも@<tt>{macro_quote}を呼ぶよう修正します。この他、関数名にアンダースコア「@<tt>{_}」も使えるようにパーサーを修正しています。
+最後に、クオート文字「@<tt>{'}」を含む式 @<tt>{'exp}を @<tt>{(quote exp)}に展開する機能を作成します。@<tt>{macro_quote}でRuby 1.9から導入された再帰型の正規表現を使っています@<fn>{fn2}。これにより、ネストされたクオート文字も正しく展開できるようになります。パーサも@<tt>{macro_quote}を呼ぶよう修正します。この他、関数名にアンダースコア「@<tt>{_}」も使えるようにパーサーを修正しています。
 
 //footnote[fn2][以降、Rubyはバージョン1.9以上を使って下さい。]
 
 //emlist{
 def macro_quote(s)
   s = s.clone
+  s.gsub!(/'([a-zA-Z_\+\-\*><=][0-9a-zA-Z_\+\-=!*]*)/, "(quote \\1)")
   while s.sub!(/'([^()]+|(?<pa>\((\?:\s|[^()]+|\g<pa>)*\)))/) {|m|
       m.sub(/^'(.*)$/, "(quote \\1)")
     }
@@ -107,11 +108,12 @@ def macro_quote(s)
 end
 
 def parse(exp)
-  program = macro_quote(exp.strip()).
+  program = macro_quote(exp.gsub(/\n/, ' ').strip()).
     gsub(/[a-zA-Z_\+\-\*><=][0-9a-zA-Z_\+\-=!*]*/, ':\\0').
     gsub(/\s+/, ', ').
     gsub(/\(/, '[').
     gsub(/\)/, ']')
+  log(program)
   eval(program)
 end
 //}
@@ -214,7 +216,7 @@ repl
 
 //emlist{
 (define (make_hash)
-  (quote ()))
+  '())
 
 (define (hash_put hash key val)
   (cons (list key val) hash))
@@ -228,10 +230,10 @@ repl
 例えば、次のように使うことが出来ます。
 
 //emlist{
->>> (let ((hash (hash_put (hash_put (make_hash) (quote key1) (quote value1)) 
-		      (quote key2) (quote value2))))
-      (hash_get hash (quote key1)))
-> > value1
+>>> (let ((hash (hash_put (hash_put (make_hash) 'key1 'value1) 
+>                 'key2 'value2)))
+>           (hash_get hash 'key1))
+value1
 //}
 
 大変お待たせしました。@<i>{p}schemeを実装しましょう。と言っても、実はほとんどやることはありません。μSchemeRのコードを見ながら移植していけば良いだけです。一気にコードを書いてしまいます。
@@ -254,7 +256,7 @@ repl
   (not (list? exp)))
 	
 (define (__eval exp env)
-  (let ((dummy (print (list (quote __eval) exp))))
+  (let ((dummy (print (list '__eval exp))))
   (if (atom? exp)
       (if (immediate_val? exp)
 	  exp
@@ -269,7 +271,7 @@ repl
   (lambda? exp))
 
 (define (lambda? exp)
-  (eq? (quote lambda) (car exp)))
+  (eq? 'lambda (car exp)))
 
 (define (eval_special_form exp env)
   (if (lambda? exp)
@@ -282,13 +284,13 @@ repl
 (define (make_closure exp env)
   (let ((parameters (cadr  exp))
 	(body       (caddr exp)))
-    (list (quote closure) parameters body env)))
+    (list 'closure parameters body env)))
 
 (define (primitive_fun? fun)
   (not (list? fun)))
 
 (define (_apply fun args)
-  (let ((dummy (print (list (quote _apply) fun args))))
+  (let ((dummy (print (list '_apply fun args))))
   (if (primitive_fun? fun)
       (apply_primitive_fun fun args)
       (lambda_apply fun args))))

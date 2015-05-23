@@ -43,7 +43,7 @@
       (fold fun (fun accum (car list)) (cdr list))))
 
 (define (make_hash)
-  (quote ()))
+  '())
 
 (define (hash_put hash key val)
   (cons (list key val) hash))
@@ -54,14 +54,14 @@
 	(else (hash_get (cdr hash) key))))
 
 (define primitive_fun_frame
-  (quote ((+  +) (-  -) (*  *)
-	  (nil  nil) 
-	  (car  car) (cdr  cdr) (cons  cons) 
-	  (eq?  eq?)
-	  (list list) (null? null?) (list? list?)
-	  (num? number?)
-	  (true true) (false false)
-	  )))
+  '((+  +) (-  -) (*  *)
+    (nil  nil)
+    (car  car) (cdr  cdr) (cons  cons)
+    (eq?  eq?)
+    (list list) (null? null?) (list? list?)
+    (num? number?)
+    (true true) (false false)
+    ))
 
 (define global_env 
   (list primitive_fun_frame))
@@ -70,7 +70,7 @@
   (not (list? exp)))
 	
 (define (__eval exp env)
-  (let ((dummy (print (list (quote __eval) exp))))
+  (let ((dummy (print (list '__eval exp))))
   (if (atom? exp)
       (if (immediate_val? exp)
 	  exp
@@ -85,7 +85,7 @@
   (lambda? exp))
 
 (define (lambda? exp)
-  (eq? (quote lambda) (car exp)))
+  (eq? 'lambda (car exp)))
 
 (define (eval_special_form exp env)
   (if (lambda? exp)
@@ -98,13 +98,13 @@
 (define (make_closure exp env)
   (let ((parameters (cadr  exp))
 	(body       (caddr exp)))
-    (list (quote closure) parameters body env)))
+    (list 'closure parameters body env)))
 
 (define (primitive_fun? fun)
   (not (list? fun)))
 
 (define (_apply fun args)
-  (let ((dummy (print (list (quote _apply) fun args))))
+  (let ((dummy (print (list '_apply fun args))))
   (if (primitive_fun? fun)
       (apply_primitive_fun fun args)
       (lambda_apply fun args))))
@@ -144,7 +144,7 @@
 	    (lookup_var var (cdr env))
 	    val))))
    
-(__eval (quote 1) global_env)
+(__eval '1 global_env)
 (__eval '(lambda (x) (+ x 1)) global_env)
 (__eval '(num? 1) global_env)
 (__eval '(+ 1 1) global_env)

@@ -13,7 +13,7 @@ aut: 渡辺昌寛
 prt: 達人出版会
 prt_url:  http://tatsu-zine.com/
 edt: 高橋征義
-date: 2015-05-08
+date: 2015-05-23
 rights: |
   (C) 2013-2015 Masahiro Watanabe
 description: (未定)
@@ -52,5 +52,5 @@ colophon: true
 texstyle: tatsumacro
 texdocumentclass: ["jsbook", "oneside,12pt"]
 pubhistory: |
-  2015年5月8日 v1.0.1版発行
+  2015年5月23日 v1.0.2版発行
 debug: true

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # $DEBUG  = true
-# $DEBUG2 = true
+# $DEBUG_SCHEME_IN_SCHEME = true
 
 $primitive_fun_env = {
   :+       => [:prim, lambda{|x, y| x + y}],
@@ -34,7 +34,8 @@ $list_env = {
 }
 
 $debug_env = {
-  :print => [:prim, lambda{|exp| puts(exp.inspect) if $DEBUG2; exp}]
+  :print => [:prim, lambda{|exp| puts(exp.inspect) if $DEBUG_SCHEME_IN_SCHEME
+               exp}]
 }
 
 $global_env = [$list_env, $primitive_fun_env, $boolean_env, $debug_env]
@@ -74,6 +75,7 @@ end
 def macro_quote(s)
 # written by dosaka
   s = s.clone
+  s.gsub!(/'([a-zA-Z_\+\-\*><=][0-9a-zA-Z_\+\-=!*]*)/, "(quote \\1)")
   while s.sub!(/'([^()]+|(?<pa>\((\?:\s|[^()]+|\g<pa>)*\)))/) {|m|
       m.sub(/^'(.*)$/, "(quote \\1)")
     }
@@ -82,7 +84,7 @@ def macro_quote(s)
 end
 
 def parse(exp)
-  program = macro_quote(exp.strip()).
+  program = macro_quote(exp.gsub(/\n/, ' ').strip()).
     # gsub(/'([^()]+|(?<quote>\((\?:\s|[^()]+|\g<quote>)*\)))/, 
     #      '(quote \k<quote>)').
     gsub(/[a-zA-Z_\+\-\*><=][0-9a-zA-Z_\+\-=!*]*/, ':\\0').
@@ -414,6 +416,8 @@ def repl
     end
     redo if line =~ /\A\s*\z/m 
     begin
+      # puts "eval_exp_line:#{line}"
+      # puts "eval_exp:#{parse(line)}"
       val = _eval(parse(line), $global_env)
     rescue Exception => e
       puts e.to_s
