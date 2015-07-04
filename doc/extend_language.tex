@@ -194,7 +194,7 @@ Rubyのデータ型に変換するものを作ります。変換後のデータ�
 Schemeのプログラムを入力できるようになります。
 
 \begin{lstlisting}
-_eval(parse('(define (length list) (if  (null?, list) 0 (+ (length (cdr list)) 1)))'), 
+_eval(parse('(define (length list) (if  (null? list) 0 (+ (length (cdr list)) 1)))'), 
       $global_env)
 puts _eval(parse('(length (list 1 2 3))'), $global_env)
 \end{lstlisting}
