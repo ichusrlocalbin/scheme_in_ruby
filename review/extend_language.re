@@ -192,7 +192,7 @@ end
 次のように「@<tt>{()}」を使う本来のSchemeの記述方法プログラムをRubyの文字列として入力すると、今までと同じように「@<tt>{[]}」や「@<tt>{,}」を使ったRubyのデータ型に変換するものを作ります。変換後のデータを評価させれば今までどおりの結果が得られますので、ユーザは「@<tt>{()}」を使う普通のSchemeのプログラムを入力できるようになります。
 
 //emlist{
-_eval(parse('(define (length list) (if  (null?, list) 0 (+ (length (cdr list)) 1)))'), 
+_eval(parse('(define (length list) (if  (null? list) 0 (+ (length (cdr list)) 1)))'), 
       $global_env)
 puts _eval(parse('(length (list 1 2 3))'), $global_env)
 //}
